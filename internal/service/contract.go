@@ -3,10 +3,12 @@ package service
 import (
 	"github.com/audi-skripsi/lambda_event_presenter/internal/config"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/repository"
+	"github.com/audi-skripsi/lambda_event_presenter/pkg/dto"
 	"github.com/sirupsen/logrus"
 )
 
 type Service interface {
+	StoreEvent(event dto.EventLog) (err error)
 }
 
 type service struct {

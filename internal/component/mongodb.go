@@ -21,7 +21,7 @@ func NewMongoDB(config config.MongoDBConfig) (mongodb *mongo.Database, err error
 		return
 	}
 	mongodb = mongo.Database(
-		config.DBAddress,
+		config.DBName,
 		&options.DatabaseOptions{
 			ReadPreference: readpref.Nearest(),
 		},

@@ -1,8 +1,11 @@
 package consumer
 
 import (
+	"encoding/json"
+
 	"github.com/audi-skripsi/lambda_event_presenter/internal/config"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/service"
+	"github.com/audi-skripsi/lambda_event_presenter/pkg/dto"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/sirupsen/logrus"
 )
@@ -43,29 +46,29 @@ func (c *Consumer) Init() {
 		return
 	}
 	c.logger.Infof("kafka ready to listen to messages at topic: %s", c.config.KafkaConfig.InTopic)
-	// go func() {
-	// 	for {
-	// 		msg, err := c.kafkaConsumer.ReadMessage(-1)
-	// 		if err != nil {
-	// 			c.logger.Errorf("error receiving message: %+v", err)
-	// 			continue
-	// 		}
-	// 		c.logger.Infof("received message: %v", string(msg.Key))
+	go func() {
+		for {
+			msg, err := c.kafkaConsumer.ReadMessage(-1)
+			if err != nil {
+				c.logger.Errorf("error receiving message: %+v", err)
+				continue
+			}
+			c.logger.Infof("received message: %v", string(msg.Key))
 
-	// 		var eventLog dto.EventLog
-	// 		err = json.Unmarshal(msg.Value, &eventLog)
-	// 		if err != nil {
-	// 			c.logger.Errorf("error unmarshalling message: %+v", err)
-	// 			c.kafkaConsumer.CommitMessage(msg)
-	// 			continue
-	// 		}
+			var eventLog dto.EventLog
+			err = json.Unmarshal(msg.Value, &eventLog)
+			if err != nil {
+				c.logger.Errorf("error unmarshalling message: %+v", err)
+				c.kafkaConsumer.CommitMessage(msg)
+				continue
+			}
 
-	// 		err = c.service.StandardizeLevelAndPush(eventLog)
-	// 		if err != nil {
-	// 			c.logger.Errorf("error handling event %+v: %+v", eventLog, err)
-	// 		}
+			err = c.service.StoreEvent(eventLog)
+			if err != nil {
+				c.logger.Errorf("error handling event %+v: %+v", eventLog, err)
+			}
 
-	// 		c.kafkaConsumer.CommitMessage(msg)
-	// 	}
-	// }()
+			c.kafkaConsumer.CommitMessage(msg)
+		}
+	}()
 }

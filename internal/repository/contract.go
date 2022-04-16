@@ -10,7 +10,7 @@ import (
 
 type Repository interface {
 	SegragateCollection(name string) (err error)
-	InsertEvent(event model.EventLog) (result model.EventLog, err error)
+	InsertEvent(event model.EventLog, collName string) (result model.EventLog, err error)
 }
 
 type repository struct {
