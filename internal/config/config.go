@@ -12,6 +12,7 @@ type Config struct {
 	AppAddress    string
 	KafkaConfig   KafkaConfig
 	MongoDBConfig MongoDBConfig
+	RedisConfig   RedisConfig
 }
 
 var config *Config
@@ -34,6 +35,10 @@ func Init() {
 			DBName:    os.Getenv("MONGODB_DB_NAME"),
 			DBAddress: os.Getenv("MONGODB_ADDRESS"),
 		},
+		RedisConfig: RedisConfig{
+			Address:  os.Getenv("REDIS_ADDRESS"),
+			Password: os.Getenv("REDIS_PASSWORD"),
+		},
 	}
 
 	if config.AppName == "" {
@@ -52,6 +57,10 @@ func Init() {
 	if config.MongoDBConfig.DBAddress == "" ||
 		config.MongoDBConfig.DBName == "" {
 		log.Panic("[Init] mongodb config cannot be empty")
+	}
+
+	if config.RedisConfig.Address == "" {
+		log.Panic("[Init] redis address cannot be empty")
 	}
 
 }

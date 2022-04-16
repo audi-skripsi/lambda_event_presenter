@@ -36,10 +36,16 @@ func main() {
 
 	logger.Infof("mongodb connected, ready to listen to connections")
 
+	redis, err := component.NewRedisClient(config.RedisConfig)
+	if err != nil {
+		logger.Fatalf("[main] error initializing redis: %+v", err)
+	}
+
 	repository := repository.NewRepository(repository.NewRepositoryParams{
 		Logger: logger,
 		Config: config,
 		Mongo:  mongo,
+		Redis:  redis,
 	})
 
 	service := service.NewService(service.NewServiceParams{
