@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/audi-skripsi/lambda_event_presenter/internal/config"
+	indto "github.com/audi-skripsi/lambda_event_presenter/internal/dto"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/repository"
 	"github.com/audi-skripsi/lambda_event_presenter/pkg/dto"
 	"github.com/sirupsen/logrus"
@@ -15,6 +16,7 @@ type service struct {
 	logger     *logrus.Entry
 	repository repository.Repository
 	config     *serviceConfig
+	BatchMap   map[string]*indto.EventBatch
 }
 
 type serviceConfig struct {
@@ -28,11 +30,14 @@ type NewServiceParams struct {
 }
 
 func NewService(params NewServiceParams) Service {
-	return &service{
+	s := &service{
 		logger:     params.Logger,
 		repository: params.Repository,
 		config: &serviceConfig{
 			KafkaConfig: &params.Config.KafkaConfig,
 		},
 	}
+	s.BatchMap = make(map[string]*indto.EventBatch)
+	s.initBatchCron()
+	return s
 }

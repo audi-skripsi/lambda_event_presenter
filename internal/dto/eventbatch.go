@@ -7,7 +7,7 @@ import (
 )
 
 type EventBatch struct {
-	*sync.Mutex
+	Mu *sync.Mutex
 
 	CollName  string
 	EventData []model.EventLog
