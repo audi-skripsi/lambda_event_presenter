@@ -2,6 +2,7 @@ package repository
 
 import (
 	"github.com/audi-skripsi/lambda_event_presenter/internal/config"
+	"github.com/audi-skripsi/lambda_event_presenter/internal/dto"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/model"
 	"github.com/go-redis/redis/v8"
 	"github.com/sirupsen/logrus"
@@ -11,6 +12,7 @@ import (
 type Repository interface {
 	SegragateCollection(name string) (err error)
 	InsertEvent(event model.EventLog, collName string) (result model.EventLog, err error)
+	BatchInsertEvent(eventBatch *dto.EventBatch) (err error)
 }
 
 type repository struct {
