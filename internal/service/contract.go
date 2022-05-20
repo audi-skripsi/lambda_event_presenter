@@ -21,6 +21,7 @@ type service struct {
 
 type serviceConfig struct {
 	KafkaConfig *config.KafkaConfig
+	BatchConfig *config.BatchConfig
 }
 
 type NewServiceParams struct {
@@ -35,6 +36,7 @@ func NewService(params NewServiceParams) Service {
 		repository: params.Repository,
 		config: &serviceConfig{
 			KafkaConfig: &params.Config.KafkaConfig,
+			BatchConfig: &params.Config.BatchConfig,
 		},
 	}
 	s.BatchMap = make(map[string]*indto.EventBatch)

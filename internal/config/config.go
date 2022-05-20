@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -13,6 +14,7 @@ type Config struct {
 	KafkaConfig   KafkaConfig
 	MongoDBConfig MongoDBConfig
 	RedisConfig   RedisConfig
+	BatchConfig   BatchConfig
 }
 
 var config *Config
@@ -39,6 +41,21 @@ func Init() {
 			Address:  os.Getenv("REDIS_ADDRESS"),
 			Password: os.Getenv("REDIS_PASSWORD"),
 		},
+	}
+
+	batchSize, err := strconv.Atoi(os.Getenv("BATCH_SIZE"))
+	if err != nil || batchSize < 0 {
+		log.Println("warning: batch size error found")
+		batchSize = 0
+	}
+	batchTimeSecond, err := strconv.Atoi(os.Getenv("BATCH_TIME_SECOND"))
+	if err != nil || batchTimeSecond == 0 {
+		log.Println("warning: batch time second error found")
+		batchTimeSecond = 10
+	}
+	config.BatchConfig = BatchConfig{
+		BatchSize:       batchSize,
+		BatchTimeSecond: batchTimeSecond,
 	}
 
 	if config.AppName == "" {

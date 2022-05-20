@@ -14,11 +14,12 @@ import (
 func (s *service) StoreEvent(event dto.EventLog) (err error) {
 	collName := collectionutil.ExtractEventLogCollName(dto.EventLog(event))
 
-	err = s.repository.SegragateCollection(collName)
-	if err != nil {
-		s.logger.Errorf("error segregating event: %+v", err)
-		return
-	}
+	// TODO: delete this if it is faster without index after experiment
+	// err = s.repository.SegragateCollection(collName)
+	// if err != nil {
+	// 	s.logger.Errorf("error segregating event: %+v", err)
+	// 	return
+	// }
 
 	err = s.batchInsertEvent(converterutil.EventLogDtoToModel(event), collName)
 	if err != nil {
@@ -43,7 +44,7 @@ func (s *service) batchInsertEvent(event model.EventLog, collName string) (err e
 
 	batch.Mu.Lock()
 	batch.EventData = append(batch.EventData, event)
-	if len(batch.EventData) > 50 {
+	if len(batch.EventData) == s.config.BatchConfig.BatchSize {
 		err = s.repository.BatchInsertEvent(batch)
 		if err != nil {
 			s.logger.Errorf("error inserting event: %+v", err)
@@ -71,7 +72,7 @@ func (s *service) initBatchCron() {
 					}
 				}(v)
 			}
-			time.Sleep(10 * time.Second)
+			time.Sleep(time.Duration(s.config.BatchConfig.BatchTimeSecond) * time.Second)
 		}
 	}()
 }
