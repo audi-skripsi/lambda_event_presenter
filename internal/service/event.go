@@ -14,13 +14,6 @@ import (
 func (s *service) StoreEvent(event dto.EventLog) (err error) {
 	collName := collectionutil.ExtractEventLogCollName(dto.EventLog(event))
 
-	// TODO: delete this if it is faster without index after experiment
-	// err = s.repository.SegragateCollection(collName)
-	// if err != nil {
-	// 	s.logger.Errorf("error segregating event: %+v", err)
-	// 	return
-	// }
-
 	err = s.batchInsertEvent(converterutil.EventLogDtoToModel(event), collName)
 	if err != nil {
 		s.logger.Errorf("error on inserting event with uid of %+v: %+v", event.UID, err)
