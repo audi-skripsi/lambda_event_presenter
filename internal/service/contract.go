@@ -10,6 +10,7 @@ import (
 
 type Service interface {
 	StoreEvent(event dto.EventLog) (err error)
+	Ping() (resp dto.PublicPingResponse)
 }
 
 type service struct {

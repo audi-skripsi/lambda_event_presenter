@@ -1,11 +1,13 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"os/signal"
 	"time"
 
 	"github.com/audi-skripsi/lambda_event_presenter/cmd/consumer"
+	"github.com/audi-skripsi/lambda_event_presenter/cmd/webservice"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/component"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/config"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/repository"
@@ -13,7 +15,15 @@ import (
 	"github.com/audi-skripsi/lambda_event_presenter/pkg/util/logutil"
 )
 
+var webserviceMode bool
+
+func init() {
+	flag.BoolVar(&webserviceMode, "webservice-mode", false, "for running the app in webservice mode")
+}
+
 func main() {
+	flag.Parse()
+
 	config.Init()
 	config := config.Get()
 
@@ -23,11 +33,6 @@ func main() {
 	})
 
 	logger.Infof("app initialized with config of: %+v", config)
-
-	kafkaConsumer, err := component.NewKafkaConsumer(config.KafkaConfig)
-	if err != nil {
-		logger.Fatalf("[main] error initializing kafka consumer: %+v", err)
-	}
 
 	mongo, err := component.NewMongoDB(config.MongoDBConfig)
 	if err != nil {
@@ -54,22 +59,36 @@ func main() {
 		Config:     config,
 	})
 
-	consumer := consumer.NewConsumer(consumer.NewConsumerParams{
-		Logger:        logger,
-		KafkaConsumer: kafkaConsumer,
-		Config:        config,
-		Service:       service,
-	})
+	if !webserviceMode {
+		kafkaConsumer, err := component.NewKafkaConsumer(config.KafkaConfig)
+		if err != nil {
+			logger.Fatalf("[main] error initializing kafka consumer: %+v", err)
+		}
 
-	consumer.Init()
+		consumer := consumer.NewConsumer(consumer.NewConsumerParams{
+			Logger:        logger,
+			KafkaConsumer: kafkaConsumer,
+			Config:        config,
+			Service:       service,
+		})
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	<-c
-	go func() {
-		go kafkaConsumer.Close()
-	}()
-	logger.Info("stopping service gracefully...")
-	time.Sleep(2 * time.Second)
-	logger.Info("service stopped gracefully")
+		consumer.Init()
+
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, os.Interrupt)
+		<-c
+		go func() {
+			go kafkaConsumer.Close()
+		}()
+		logger.Info("stopping service gracefully...")
+		time.Sleep(2 * time.Second)
+		logger.Info("service stopped gracefully")
+	} else {
+		webservice.Init(&webservice.InitWebserviceParams{
+			Logger:  logger,
+			Conf:    config,
+			Service: service,
+		})
+	}
+
 }
