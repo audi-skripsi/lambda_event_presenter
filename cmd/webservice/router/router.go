@@ -17,4 +17,7 @@ type RouterParams struct {
 
 func Init(params *RouterParams) {
 	params.Router.HandleFunc(PingPath, handler.HandlePing(params.Service.Ping)).Methods(http.MethodGet)
+	params.Router.HandleFunc(GetMicroservicesData,
+		handler.HandleGetAllMicroservicesData(params.Service.GetAllMicroservicesData),
+	).Methods(http.MethodGet)
 }

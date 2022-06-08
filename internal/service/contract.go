@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/audi-skripsi/lambda_event_presenter/internal/config"
 	indto "github.com/audi-skripsi/lambda_event_presenter/internal/dto"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/repository"
@@ -9,6 +11,8 @@ import (
 )
 
 type Service interface {
+	GetAllMicroservicesData(ctx context.Context) (microservicesData dto.PublicMicroservicesNameResponse, err error)
+
 	StoreEvent(event dto.EventLog) (err error)
 	Ping() (resp dto.PublicPingResponse)
 }
