@@ -23,3 +23,14 @@ func (s *service) GetAllMicroservicesData(ctx context.Context) (microservicesDat
 	microservicesData = dto.PublicMicroservicesNameResponse{Microservices: processedMicroservicesData}
 	return
 }
+
+func (s *service) GetMicroserviceDataAnalytics(ctx context.Context, id string) (resp dto.PublicMicroserviceAnalyticsResponse, err error) {
+	count, err := s.repository.GetMicroserviceAllEventDataCount(ctx, id)
+	if err != nil {
+		s.logger.Errorf("error occured for finding data count for: %+v, error: %+v", id, err)
+		return
+	}
+
+	resp.EventDataCount = count
+	return
+}

@@ -12,6 +12,7 @@ import (
 
 type Service interface {
 	GetAllMicroservicesData(ctx context.Context) (microservicesData dto.PublicMicroservicesNameResponse, err error)
+	GetMicroserviceDataAnalytics(ctx context.Context, id string) (resp dto.PublicMicroserviceAnalyticsResponse, err error)
 
 	StoreEvent(event dto.EventLog) (err error)
 	Ping() (resp dto.PublicPingResponse)

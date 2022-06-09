@@ -14,6 +14,8 @@ import (
 
 type Repository interface {
 	GetAllMicroservicesName(ctx context.Context) (collections []string, err error)
+	GetMicroserviceDataByID(ctx context.Context, microserviceID string) (data *pkgdto.PublicMicroserviceData, err error)
+	GetMicroserviceAllEventDataCount(ctx context.Context, microserviceID string) (count pkgdto.PublicMicroserviceDataCount, err error)
 	StoreMicroservicesData(ctx context.Context, microservicesData []pkgdto.PublicMicroserviceData) (err error)
 
 	InsertEvent(event model.EventLog, collName string) (result model.EventLog, err error)

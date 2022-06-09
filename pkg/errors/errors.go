@@ -7,13 +7,16 @@ import (
 )
 
 var (
-	ErrBadRequest     = errors.New("bad request")
+	ErrBadRequest           = errors.New("bad request")
+	ErrMicroserviceNotFound = errors.New("microservice not found")
+
 	ErrInternalServer = errors.New("internal server error")
 )
 
 var errorMapping = map[error]dto.ErrorResponse{
-	ErrBadRequest:     {Code: 400, Message: ErrBadRequest.Error()},
-	ErrInternalServer: {Code: 500, Message: ErrInternalServer.Error()},
+	ErrBadRequest:           {Code: 400, Message: ErrBadRequest.Error()},
+	ErrMicroserviceNotFound: {Code: 404, Message: ErrMicroserviceNotFound.Error()},
+	ErrInternalServer:       {Code: 500, Message: ErrInternalServer.Error()},
 }
 
 func GetErrorResponse(er error) (errRes dto.ErrorResponse) {

@@ -20,4 +20,7 @@ func Init(params *RouterParams) {
 	params.Router.HandleFunc(GetMicroservicesData,
 		handler.HandleGetAllMicroservicesData(params.Service.GetAllMicroservicesData),
 	).Methods(http.MethodGet)
+	params.Router.HandleFunc(GetMicroservicesAnalytics,
+		handler.HandleGetAllMicroservicesDataAnalytics(params.Service.GetMicroserviceDataAnalytics),
+	).Methods(http.MethodGet)
 }
