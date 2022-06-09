@@ -30,6 +30,6 @@ type PublicMicroserviceAnalyticsResponse struct {
 }
 
 type PublicMicroserviceEventSearchResponse struct {
-	TotalEventData int64           `json:"totalEventData"`
-	Events         PublicEventData `json:"events"`
+	TotalEventData int64             `json:"totalEventData"`
+	Events         []PublicEventData `json:"events"`
 }

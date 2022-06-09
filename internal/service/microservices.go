@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 
+	indto "github.com/audi-skripsi/lambda_event_presenter/internal/dto"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/util/microserviceutil"
 	"github.com/audi-skripsi/lambda_event_presenter/pkg/dto"
 )
@@ -32,5 +33,16 @@ func (s *service) GetMicroserviceDataAnalytics(ctx context.Context, id string) (
 	}
 
 	resp.EventDataCount = count
+	return
+}
+
+func (s *service) GetMicroserviceEvents(ctx context.Context, id string, criteria indto.SearchEventCriteria) (resp dto.PublicMicroserviceEventSearchResponse, err error) {
+	data, err := s.repository.FindMicroserviceEventData(ctx, id, criteria)
+	if err != nil {
+		s.logger.Errorf("error occured on repository for finding events for id: %+s, criteria: %+v, error: +%v", id, criteria, err)
+	}
+
+	resp.Events = data
+	resp.TotalEventData = int64(len(data))
 	return
 }

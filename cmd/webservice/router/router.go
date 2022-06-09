@@ -23,4 +23,7 @@ func Init(params *RouterParams) {
 	params.Router.HandleFunc(GetMicroservicesAnalytics,
 		handler.HandleGetAllMicroservicesDataAnalytics(params.Service.GetMicroserviceDataAnalytics),
 	).Methods(http.MethodGet)
+	params.Router.HandleFunc(GetMicroservicesEvents,
+		handler.HandleGetMicroserviceEvents(params.Service.GetMicroserviceEvents),
+	).Methods(http.MethodGet)
 }
