@@ -16,14 +16,15 @@ type RouterParams struct {
 }
 
 func Init(params *RouterParams) {
-	params.Router.HandleFunc(PingPath, handler.HandlePing(params.Service.Ping)).Methods(http.MethodGet)
+
+	params.Router.HandleFunc(PingPath, handler.HandlePing(params.Service.Ping)).Methods(http.MethodGet, http.MethodOptions)
 	params.Router.HandleFunc(GetMicroservicesData,
 		handler.HandleGetAllMicroservicesData(params.Service.GetAllMicroservicesData),
-	).Methods(http.MethodGet)
+	).Methods(http.MethodGet, http.MethodOptions)
 	params.Router.HandleFunc(GetMicroservicesAnalytics,
 		handler.HandleGetAllMicroservicesDataAnalytics(params.Service.GetMicroserviceDataAnalytics),
-	).Methods(http.MethodGet)
+	).Methods(http.MethodGet, http.MethodOptions)
 	params.Router.HandleFunc(GetMicroservicesEvents,
 		handler.HandleGetMicroserviceEvents(params.Service.GetMicroserviceEvents),
-	).Methods(http.MethodGet)
+	).Methods(http.MethodGet, http.MethodOptions)
 }

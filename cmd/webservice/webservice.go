@@ -6,6 +6,7 @@ import (
 	"github.com/audi-skripsi/lambda_event_presenter/cmd/webservice/router"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/config"
 	"github.com/audi-skripsi/lambda_event_presenter/internal/service"
+	muxHandler "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
@@ -26,7 +27,7 @@ func Init(params *InitWebserviceParams) {
 		Router:  r,
 	})
 
-	err = http.ListenAndServe(params.Conf.AppAddress, r)
+	err = http.ListenAndServe(params.Conf.AppAddress, muxHandler.CORS()(r))
 	if err != nil {
 		params.Logger.Fatalf("[Init] error listening to: %s, error: %+v", params.Conf.AppAddress, err)
 	}
