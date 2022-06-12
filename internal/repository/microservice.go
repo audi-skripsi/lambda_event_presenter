@@ -99,6 +99,8 @@ func (r *repository) StoreMicroservicesData(ctx context.Context, microservicesDa
 }
 
 func (r *repository) FindMicroserviceEventData(ctx context.Context, microserviceID string, criteria indto.SearchEventCriteria) (events []dto.PublicEventData, err error) {
+	events = make([]dto.PublicEventData, 0)
+
 	microserviceColls, err := r.mongo.ListCollectionNames(ctx, bson.D{{
 		Key: "name",
 		Value: bson.D{{
@@ -112,8 +114,6 @@ func (r *repository) FindMicroserviceEventData(ctx context.Context, microservice
 	if err != nil {
 		r.logger.Errorf("error list collections for: %s: %+v", microserviceID, err)
 	}
-
-	fmt.Println(criteria)
 
 	for _, collName := range microserviceColls {
 		filter := bson.D{}
@@ -164,8 +164,6 @@ func (r *repository) FindMicroserviceEventData(ctx context.Context, microservice
 
 			filter = append(filter, timeCriteria...)
 		}
-
-		fmt.Println(filter)
 
 		curs, err = r.mongo.Collection(collName).Find(ctx, filter)
 		if err != nil {

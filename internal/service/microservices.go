@@ -21,6 +21,10 @@ func (s *service) GetAllMicroservicesData(ctx context.Context) (microservicesDat
 		s.logger.Errorf("error storing microservices data of: %+v, error: %+v", processedMicroservicesData, err)
 	}
 
+	if processedMicroservicesData == nil {
+		processedMicroservicesData = make([]dto.PublicMicroserviceData, 0)
+	}
+
 	microservicesData = dto.PublicMicroservicesNameResponse{Microservices: processedMicroservicesData}
 	return
 }
