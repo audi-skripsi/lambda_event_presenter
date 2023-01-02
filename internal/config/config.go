@@ -15,11 +15,12 @@ type Config struct {
 	MongoDBConfig MongoDBConfig
 	RedisConfig   RedisConfig
 	BatchConfig   BatchConfig
+	AppMode       AppMode
 }
 
 var config *Config
 
-func Init() {
+func Init(webServiceMode bool) {
 	err := godotenv.Load("conf/.env")
 	if err != nil {
 		log.Printf("[Init] error on loading env from file: %+v", err)
@@ -41,6 +42,12 @@ func Init() {
 			Address:  os.Getenv("REDIS_ADDRESS"),
 			Password: os.Getenv("REDIS_PASSWORD"),
 		},
+	}
+
+	if webServiceMode {
+		config.AppMode = AppModeWebservice
+	} else {
+		config.AppMode = AppModeConsumer
 	}
 
 	batchSize, err := strconv.Atoi(os.Getenv("BATCH_SIZE"))
@@ -66,9 +73,11 @@ func Init() {
 		log.Panicf("[Init] app address cannot be empty")
 	}
 
-	if config.KafkaConfig.Address == "" ||
-		config.KafkaConfig.InTopic == "" {
-		log.Panicf("[Init] kafka config cannot be empty")
+	if config.AppMode != AppModeWebservice {
+		if config.KafkaConfig.Address == "" ||
+			config.KafkaConfig.InTopic == "" {
+			log.Panicf("[Init] kafka config cannot be empty")
+		}
 	}
 
 	if config.MongoDBConfig.DBAddress == "" ||

@@ -24,7 +24,7 @@ func init() {
 func main() {
 	flag.Parse()
 
-	config.Init()
+	config.Init(webserviceMode)
 	config := config.Get()
 
 	logger := logutil.NewLogger(logutil.NewLoggerParams{
